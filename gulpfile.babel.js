@@ -52,7 +52,6 @@ gulp.task('styles:dist', () => {
       includePaths: ['.']
     }).on('error', $.sass.logError))
     .pipe($.autoprefixer({browsers: ['> 1%', 'last 2 versions', 'Firefox ESR']}))
-    .pipe($.sourcemaps.write())
     .pipe(gulp.dest(DIST_DIR+'/turtleJS'))
     .pipe(reload({stream: true}));
 });
@@ -82,15 +81,14 @@ gulp.task('scripts:watch', () => {
 });
 
 gulp.task('scripts:dist', () => {
-  return gulp.src(DEV_DIR+'/turtleJS/**/*.babel.js')
+  return gulp.src(DEV_DIR+'/turtleJS/**/*.js')
     .pipe($.rename({
       basename: "turtleJS",
       extname: ".js"
     }))
     .pipe($.plumber())
     .pipe($.sourcemaps.init())
-    .pipe($.babel())
-    .pipe($.sourcemaps.write('.'))
+    // .pipe($.babel())
     .pipe(gulp.dest(DIST_DIR+'/turtleJS'))
     .pipe(reload({stream: true}));
 });
@@ -203,7 +201,7 @@ gulp.task('serve:test', ['scripts'], () => {
 });
 
 
-gulp.task('build', ['lint', 'move', 'images', 'extras'], () => {
+gulp.task('build', ['lint', 'move', 'images'], () => {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 

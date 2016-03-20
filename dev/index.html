@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>turtleJS</title>
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+
+    <link rel="stylesheet" href="styles/sandbox.css">
+
+    <style type="text/css">
+		body .turtlejs img{
+			/*margin-left: 2px;*/
+			height: 300px;
+		}
+    </style>
+
+  </head>
+  <body>
+
+
+    <h1>turtleJS</h1>
+
+    <div class="turtlejs">
+
+    	  <img src="images/4.jpg" alt=""><img src="images/1.jpg" alt="">
+    	  <img src="images/2.jpg" alt="">
+    	  <img src="images/5.jpg" alt="">
+    	  <img src="images/3.jpg" alt="">
+    	  <img src="images/6.jpg" alt="">
+    	  <img src="images/7.jpg" alt="">
+    	  <img src="images/8.jpg" alt="">
+    </div>
+
+
+    <script src="sandbox.js"></script>
+    <script src="turtleJS/turtleJS.js"></script>
+    <script type="text/javascript">
+    	document.addEventListener("DOMContentLoaded", function(event) {
+    	    turtle.init();
+    	});
+    	setTimeout(function() {
+    		turtle.init();
+    	}, 500);
+    </script>
+
+  </body>
+</html>

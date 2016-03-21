@@ -17,7 +17,7 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.md]
+[*.{md,svg}]
 trim_trailing_whitespace = false
 
 [{package,bower}.json]

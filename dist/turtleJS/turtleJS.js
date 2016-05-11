@@ -1,57 +1,62 @@
 var turtle = (function() {
-	"use strict";
+    'use strict';
 
-	var container 			= QS('.turtlejs'), // Container of the images,
-		containerPadding 	= 0,
-		containerWidth 		= 0,
-		itemsArray 			= [],
-		itemMargin 			= 0,
-		items 				= [], // Array of all the <img>
-		count 				= [],
-		maxWidth 			= 0;
+    var container 			= QS('.turtlejs'), // Container of the images,
+    containerPadding 	= 0,
+    containerWidth 		= 0,
+    itemsArray 			= [],
+    itemMargin 			= 0,
+    items 				= [], // Array of all the <img>
+    count 				= [],
+    maxWidth 			= 0;
 
-	function init() {
+    function init() {
 
-		if (container instanceof HTMLElement) {
+        if (container instanceof HTMLElement) {
 
-			/**
+        	var tmpContainer,
+        		images,
+        		style,
+        		i;
+
+            /**
 			 * Create easy to overwrite css
 			 * @type {[type]}
 			 */
-			var style = document.createElement('style');
-			style.type = 'text/css';
-			style.innerHTML = '.turtlejs-item { margin-left: 4px; height: 300px; }';
-			document.getElementsByTagName('head')[0].appendChild(style);
+            style = document.createElement('style');
 
-			// container.innerHTML.replace(/\n/g, "");
-			var con = container.innerHTML.replace(/>\s+</g, "><");
-			container.innerHTML = con;
+            style.type = 'text/css';
+            style.innerHTML = '.turtlejs-item { margin-left: 4px; height: 300px; }';
+            document.getElementsByTagName('head')[0].appendChild(style);
 
-			var images = container.querySelectorAll("img");
-			for (var i = 0; i < images.length; i++) {
-				images[i].classList.add("turtlejs-item");
-			}
+            tmpContainer = container.innerHTML.replace(/>\s+</g, '><');
+            container.innerHTML = tmpContainer;
 
+            images = container.querySelectorAll('img');
+            for (i = 0; i < images.length; i++) {
+                images[i].classList.add('turtlejs-item');
 
-			initImages();
-		    // Stop layout from paiting to many times
-		    window.addEventListener('resize', function(event) {
-		    	var id = String(new Date().getTime());
-		        waitForFinalEvent(function() {
-		            initImages();
-		        }, 500, id);
-		    }, false);
+            }
 
-		}
-	}
+            initImages();
+            // Stop layout from paiting to many times
+            window.addEventListener('resize', function(event) {
+                var id = String(new Date().getTime());
 
-	function initImages() {
+                waitForFinalEvent(function() {
+                    initImages();
+                }, 500, id);
+            }, false);
+
+        }
+    }
+
+    function initImages() {
 
         containerPadding = getValue(QS('.turtlejs'),'padding-left') * 2;
         containerWidth = getValue(QS('.turtlejs'), 'width');
         itemMargin = getValue(QS('.turtlejs-item'), 'margin-left') * 2;
         items = QSA('.turtlejs-item');
-
 
         for (var i = 0; i < items.length; i++) {
             itemsArray.push(i);
@@ -63,7 +68,7 @@ var turtle = (function() {
         setImages();
     }
 
-	function setImages() {
+    function setImages() {
         maxWidth = 0;
         count = [];
         var img;
@@ -77,6 +82,7 @@ var turtle = (function() {
                 count.push(i);
 
             }
+
         };
 
         if (itemsArray.length > 0) {
@@ -123,6 +129,7 @@ var turtle = (function() {
                 itemsArray.shift();
 
             };
+
         };
 
         if (itemsArray.length > 0) {
@@ -141,48 +148,50 @@ var turtle = (function() {
         }
     }
 
+    /**
+    	 * Helpers
+    	 * @param {[type]} element [description]
+    	 */
 
-	/**
-	 * Helpers
-	 * @param {[type]} element [description]
-	 */
+    var waitForFinalEvent = (function() {
+        var timers = {};
 
-	var waitForFinalEvent = (function () {
-	  var timers = {};
-	  return function (callback, ms, uniqueId) {
-	    if (!uniqueId) {
-	      uniqueId = "Don't call this twice without a uniqueId";
-	    }
-	    if (timers[uniqueId]) {
-	      clearTimeout (timers[uniqueId]);
-	    }
-	    timers[uniqueId] = setTimeout(callback, ms);
-	  };
-	})();
+        return function(callback, ms, uniqueId) {
+            if (!uniqueId) {
+                uniqueId = 'Don\'t call this twice without a uniqueId';
 
+            }
 
+            if (timers[uniqueId]) {
+                clearTimeout(timers[uniqueId]);
 
-	function getValue(elem, value) {
-	    var newValue = getComputedStyle(elem, null).getPropertyValue(value);
+            }
 
-	    return parseFloat(newValue.substring(0, newValue.length - 2));
-	}
+            timers[uniqueId] = setTimeout(callback, ms);
+        };
+    })();
 
-	function QS(element) {
-	    return document.querySelector(element);
-	}
+    function getValue(elem, value) {
+        var newValue = getComputedStyle(elem, null).getPropertyValue(value);
 
-	function QSA(element) {
-	    return document.querySelectorAll(element);
-	}
+        return parseFloat(newValue.substring(0, newValue.length - 2));
+    }
 
-	function ID(elementID) {
-	    return document.getElementById(elementID);
-	}
+    function QS(element) {
+        return document.querySelector(element);
+    }
 
-	return {
-		init: init
-	};
+    function QSA(element) {
+        return document.querySelectorAll(element);
+    }
+
+    function ID(elementID) {
+        return document.getElementById(elementID);
+    }
+
+    return {
+        init: init
+    };
 
 })();
 

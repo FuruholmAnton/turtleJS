@@ -1,16 +1,22 @@
-var turtle = (function() {
+var turtle = (function () {
     'use strict';
 
     var container 			= QS('.turtlejs'), // Container of the images,
-    containerPadding 	= 0,
-    containerWidth 		= 0,
-    itemsArray 			= [],
-    itemMargin 			= 0,
-    items 				= [], // Array of all the <img>
-    count 				= [],
-    maxWidth 			= 0;
+	    containerPadding 	= 0,
+	    containerWidth 		= 0,
+	    itemsArray 			= [],
+	    itemMargin 			= 0,
+	    items 				= [], // Array of all the <img>
+	    count 				= [],
+	    maxWidth 			= 0,
+	    totalNumberOfImages	= 0,
+	    currentNumberOfImage	= 0;
 
-    function init() {
+
+	var turtle = {};
+
+    function init(callback) {
+    	turtle.runAtFinish = callback;
 
         if (container instanceof HTMLElement) {
 
@@ -26,19 +32,25 @@ var turtle = (function() {
             style = document.createElement('style');
 
             style.type = 'text/css';
-            style.innerHTML = '.turtlejs-item { margin-left: 4px; height: 300px; }';
+            style.innerHTML = '.turtlejs-item { margin-left: 4px; height: 300px; display: inline-block; }';
             document.getElementsByTagName('head')[0].appendChild(style);
 
             tmpContainer = container.innerHTML.replace(/>\s+</g, '><');
             container.innerHTML = tmpContainer;
 
             images = container.querySelectorAll('img');
+            totalNumberOfImages = images.length;
             for (i = 0; i < images.length; i++) {
                 images[i].classList.add('turtlejs-item');
+            	images[i].addEventListener("load", function() {
+            		currentNumberOfImage++;
+            		if(currentNumberOfImage == (totalNumberOfImages - 1)) {
+            			initImages();
+            		}
 
+            	});
             }
 
-            initImages();
             // Stop layout from paiting to many times
             window.addEventListener('resize', function(event) {
                 var id = String(new Date().getTime());
@@ -142,8 +154,8 @@ var turtle = (function() {
 
             for (var i = 0; i < allImages.length; i++) {
                 allImages[i].style.opacity = '1';
-
             };
+            turtle.runAtFinish();
 
         }
     }

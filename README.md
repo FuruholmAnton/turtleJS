@@ -2,5 +2,5 @@
 
 A flickr like grid system
 
-## !Work in progress
+## ! Work in progress
 It doesn't work for the moment

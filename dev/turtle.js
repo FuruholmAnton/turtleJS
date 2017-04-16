@@ -36,12 +36,6 @@ class Turtle {
         this.wrapper = wrapper.cloneNode(true);
         this.oldWrapperReference = wrapper;
         this.items = Array.from(this.wrapper.querySelectorAll('img'));
-        this.itemsObj = this.items.reduce(function(acc, cur, i) {
-            acc[i] = cur;
-            return acc;
-        }, {});
-
-        // TODO: create weakMap
 
         this.totalItems = this.items.length;
 
@@ -116,6 +110,11 @@ class Turtle {
             };
         }
 
+        this.itemsMap = new WeakMap();
+        this.items.forEach(function(element) {
+            this.itemsMap.set(element, element);
+        }, this);
+
         if (this.config.resize === true) {
             const _this = this;
             // Stop layout from repaiting to many times on resize
@@ -157,13 +156,18 @@ class Turtle {
 
         for (let i = 0; i < items.length; i++) {
             /* Sets the height ratio compared to the width */
-            items[i].turtle.ratio.height = items[i].naturalHeight / items[i].naturalWidth;
+            // items[i].turtle.ratio.height = items[i].naturalHeight / items[i].naturalWidth;
+            items[i].turtle.ratio.height = 1;
             items[i].turtle.ratio.width = items[i].naturalWidth / items[i].naturalHeight;
         };
 
         /* Keeps track of items left to process
            Entries are removed after they processed */
-        this.unprocessedItems = this.items;
+        this.unprocessedItems = JSON.parse(JSON.stringify(this.items));
+        let i = 0;
+        this.unprocessedItems.map((n) => {
+            return n.key = i++;
+        });
 
         /* Run setItems() if there's enough space for 2 images */
         if (this.wrapperWidthForUse >= (this.config.minWidth * 2)) {
@@ -237,28 +241,50 @@ class Turtle {
             /**/
 
             // New for to replace above
-            let itemsToTry = this.maxItems;
+            let itemsToTry = Math.min(this.maxItems, this.unprocessedItems.length);
 
             let setImagesWidthHeight = function(items) {
                 let itemsCount = items;
 
+                // for (let i = 0; i < itemsCount; i++) {
+                //     let currentItem = this.items[this.unprocessedItems[0].key];
+
+                //     let ratio = currentItem.turtle.ratio;
+
+                //     /* Get real ratio height */
+                //     /* + 1 to get the margin on the right side of the last one */
+                //     let spaceForOne = ((this.wrapperWidthForUse - (this.config.itemMargin * (itemsCount + 1))) / itemsCount);
+                //     imageHeight = ratio.height * spaceForOne;
+                //     imageWidth = ratio.width * spaceForOne;
+
+                //     // diffWidth = imageWidth * (this.wrapperWidth / itemsCount);
+                //     // diffHeight = imageHeight * (this.wrapperWidth / itemsCount);
+
+                //     // currentItem.style.width = diffWidth - (this.config.wrapperPadding / this.unprocessedItems.length) - this.itemMargin + 'px';
+                //     // currentItem.style.height = diffHeight - this.itemMargin + 'px';
+
+                //     currentItem.style.width = imageWidth + 'px';
+                //     currentItem.style.height = imageHeight + 'px';
+
+                //     /* Remove item from unprocessed */
+                //     this.unprocessedItems.splice(0, 1);
+                //     if (this.unprocessedItems.length === 0) return false;
+                // }
+
+                let totalWithRatio = 0;
+                let spaceOver = (this.wrapperWidthForUse - (this.config.itemMargin * (itemsCount + 1)));
+
                 for (let i = 0; i < itemsCount; i++) {
-                    let currentItem = this.itemsObj[this.unprocessedItems[0]];
+                    totalWithRatio += this.items[this.unprocessedItems[i].key].turtle.ratio.width;
+                }
 
-                    let ratio = currentItem.turtle.ratio.height;
-
-                    /* Get real ratio height */
-                    imageHeight = (this.wrapperWidthForUse / itemsCount) * ratio.height;
-                    imageWidth = (this.wrapperWidthForUse / itemsCount) * ratio.width;
-
-                    diffWidth = imageWidth * (this.wrapperWidth / itemsCount);
-                    diffHeight = imageHeight * (this.wrapperWidth / itemsCount);
-
-                    currentItem.style.width = diffWidth - (this.wrapperPadding / this.unprocessedItems.length) - this.itemMargin + 'px';
-                    currentItem.style.height = diffHeight - this.itemMargin + 'px';
+                for (let i = 0; i < itemsCount; i++) {
+                    this.items[this.unprocessedItems[0].key].style.width = (spaceOver / totalWithRatio) * this.items[this.unprocessedItems[0].key].turtle.ratio.width + 'px';
+                    this.items[this.unprocessedItems[0].key].style.height = (spaceOver / totalWithRatio) + 'px';
 
                     /* Remove item from unprocessed */
-                    this.unprocessedItems.splice(i, 1);
+                    this.unprocessedItems.splice(0, 1);
+                    if (this.unprocessedItems.length === 0) return false;
                 }
             };
             setImagesWidthHeight = setImagesWidthHeight.bind(this);
@@ -273,18 +299,20 @@ class Turtle {
                 let itemsCount = items;
                 let passed = true;
 
+                // TODO: Need to check if all can fix with the same height
+
                 /* Get all ratios */
                 for (let i = 0; i < itemsCount; i++) {
                     /* check the real item */
-                    let currentItem = this.itemsObj[this.unprocessedItems[i]];
+                    let currentItem = this.items[this.unprocessedItems[i].key];
 
                     /* Height ratio ex. 0.46 */
-                    let ratio = currentItem.turtle.ratio.height;
+                    let ratio = currentItem.turtle.ratio;
 
                     /* Get real ratio height
                        width for one item = Wrapper space (padding included) - margin for each item, devided by items
                        height = width * ratio */
-                    imageHeight = ((this.wrapperWidthForUse - (this.itemMargin * itemsCount)) / itemsCount) * ratio;
+                    imageHeight = ((this.wrapperWidthForUse - (this.config.itemMargin * itemsCount)) / itemsCount) * ratio.height;
 
                     if (imageHeight > this.config.minHeight
                         && imageHeight < this.config.maxHeight) {
@@ -295,13 +323,24 @@ class Turtle {
                     }
                 }
 
+                if (itemsToTry <= Math.min(this.minItems, 2)) {
+                    setImagesWidthHeight(itemsToTry);
+                    return false;
+                }
+
                 /* if items fit in wrapper */
                 if (passed) {
                     // TODO: save values
                     setImagesWidthHeight(itemsToTry);
+
+
                     /* return false to stop while loop */
                     return false;
                 } else {
+                    if (itemsToTry = 1) {
+                        setImagesWidthHeight(itemsToTry);
+                        return false;
+                    }
                     /* Try width one less item */
                     itemsToTry -= 1;
                     /* return true to do while loop */
@@ -326,8 +365,12 @@ class Turtle {
         } else {
             /* Finished */
             // TODO: append wrapper to old wrapper
-            this.oldWrapperReference.outerHTML = this.wrapper;
-            if (typeof this.userCallback() === 'function') {
+            this.wrapper.innerHTML = '';
+            this.items.forEach(function(element) {
+                this.wrapper.appendChild(element);
+            }, this);
+            this.oldWrapperReference.innerHTML = this.wrapper.innerHTML;
+            if (typeof this.userCallback === 'function') {
                 this.userCallback();
             }
         }

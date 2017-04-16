@@ -2,7 +2,8 @@ module.exports = {
 	"root": true,
 	"extends": ["google"],
 	"parserOptions": {
-		"ecmaVersion": 6
+		"ecmaVersion": 6,
+        "sourceType": "module",
 	},
 	"rules": {
 		"semi": 2,

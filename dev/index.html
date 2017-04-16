@@ -32,8 +32,11 @@
 
     <script src="turtle.js"></script>
     <script type="text/javascript">
-    	document.addEventListener("load", function(event) {
-    	    turtle.init();
+    	document.addEventListener("DOMContentLoaded", function(event) {
+        window.turtle = new Turtle(document.querySelector('.turtlejs'), {
+          minWidth: 200,
+        });
+    	  turtle.init();
     	});
     </script>
   </body>

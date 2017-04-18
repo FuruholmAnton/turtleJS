@@ -3,4 +3,4 @@
 A flickr like grid system
 
 ## ! Work in progress
-It doesn't work for the moment
+Has some serious bugs at the moment

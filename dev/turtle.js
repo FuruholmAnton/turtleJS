@@ -1,25 +1,3 @@
-/* Helpers */
-let waitForFinalEvent = (function() {
-    let timers = {};
-
-    return function(callback, ms, uniqueId) {
-        if (!uniqueId) {
-            uniqueId = 'Don\'t call this twice without a uniqueId';
-        }
-
-        if (timers[uniqueId]) {
-            clearTimeout(timers[uniqueId]);
-        }
-
-        timers[uniqueId] = setTimeout(callback, ms);
-    };
-})();
-
-const getValue = function(elem, value) {
-    let newValue = getComputedStyle(elem, null).getPropertyValue(value);
-
-    return parseFloat(newValue.substring(0, newValue.length - 2));
-};
 
 class Turtle {
 
@@ -87,11 +65,9 @@ class Turtle {
         /* Some styling */
         let style = document.createElement('style');
         style.type = 'text/css';
-        style.innerHTML =`.turtlejs { padding: ${this.config.wrapperPadding}px; } .turtlejs-item { margin-left: ${this.config.itemMargin}px; display: inline-block; }`;
+        style.innerHTML = `.turtlejs { padding: ${this.config.wrapperPadding}px; } .turtlejs-item { margin-left: ${this.config.itemMargin}px; margin-bottom: ${this.config.itemMargin}px; display: inline-block; vertical-align: top; }`;
         document.head.appendChild(style);
 
-        /* Removes whitespace from within container */
-        this.wrapper.innerHTML = this.wrapper.innerHTML.replace(/>\s+</g, '><');
         this.wrapper.classList.add('turtlejs');
 
         /* Adds class for styling
@@ -114,18 +90,6 @@ class Turtle {
         this.items.forEach(function(element) {
             this.itemsMap.set(element, element);
         }, this);
-
-        if (this.config.resize === true) {
-            const _this = this;
-            // Stop layout from repaiting to many times on resize
-            window.addEventListener('resize', function(event) {
-                let id = String(new Date().getTime());
-
-                waitForFinalEvent(function() {
-                    _this.initItems();
-                }, 500, id);
-            }, false);
-        }
     }
 
     /**
@@ -177,18 +141,6 @@ class Turtle {
         }
     }
 
-    setItems() {
-        // for (let i = 0; i < this.unprocessedItems.length; i++) {
-        //     this.totalUnprocessed.push(i);
-        // }
-
-        // /* Run fix until every row has finished layout */
-        // if (this.unprocessedItems.length > 0) {
-        //     this.fix();
-        // }
-        this.fix();
-    }
-
     fix() {
         let diffWidth = 0;
         let diffHeight = 0;
@@ -196,38 +148,11 @@ class Turtle {
         let imageWidth;
         let imageHeight;
 
-        if (this.unprocessedItems.length === 1 && window.innerWidth > 400) {
+        if (this.unprocessedItems.length === 1) {
             // Removes the last item in the array
             /* No need to process one item */
             this.unprocessedItems.shift();
         } else {
-            // for (let i = 0; i < this.totalUnprocessed.length; i++) {
-            //     // calculates the new width
-
-            //     currentItem = items[this.unprocessedItems[0]];
-
-            //     // TODO: base on user input
-            //     imageWidth = this.config.maxWidth;
-
-            //     /* Ratio ex. 0.46 */
-            //     let ratio = currentItem.naturalHeight / currentItem.naturalWidth;
-            //     /* get real ratio height */
-            //     imageHeight = imageWidth * ratio;
-
-            //     if (imageHeight > this.config.minHeight
-            //             && imageHeight < this.config.maxHeight) {
-
-            //     }
-
-            //     diffWidth = imageWidth * (this.wrapperWidth / this.maxWidth);
-            //     diffHeight = imageHeight * (this.wrapperWidth / this.maxWidth);
-
-            //     currentItem.style.width = diffWidth - (this.wrapperPadding / this.totalUnprocessed.length) - this.itemMargin + 'px';
-            //     currentItem.style.height = diffHeight - this.itemMargin + 'px';
-
-            //     this.unprocessedItems.shift();
-            // };
-
             /**/
 
                 // get maxItems of images and check the height compared to the ratio
@@ -235,7 +160,7 @@ class Turtle {
                 // Otherwise take maxItems - 1, but not less than minItems.
                 // repeat process
 
-                // TODO: Save values in array and set all images at the same time
+                // Save values in array and set all images at the same time
                 // Copy wrapper to virtual and append everything at the same time
 
             /**/
@@ -245,40 +170,18 @@ class Turtle {
 
             let setImagesWidthHeight = function(items) {
                 let itemsCount = items;
-
-                // for (let i = 0; i < itemsCount; i++) {
-                //     let currentItem = this.items[this.unprocessedItems[0].key];
-
-                //     let ratio = currentItem.turtle.ratio;
-
-                //     /* Get real ratio height */
-                //     /* + 1 to get the margin on the right side of the last one */
-                //     let spaceForOne = ((this.wrapperWidthForUse - (this.config.itemMargin * (itemsCount + 1))) / itemsCount);
-                //     imageHeight = ratio.height * spaceForOne;
-                //     imageWidth = ratio.width * spaceForOne;
-
-                //     // diffWidth = imageWidth * (this.wrapperWidth / itemsCount);
-                //     // diffHeight = imageHeight * (this.wrapperWidth / itemsCount);
-
-                //     // currentItem.style.width = diffWidth - (this.config.wrapperPadding / this.unprocessedItems.length) - this.itemMargin + 'px';
-                //     // currentItem.style.height = diffHeight - this.itemMargin + 'px';
-
-                //     currentItem.style.width = imageWidth + 'px';
-                //     currentItem.style.height = imageHeight + 'px';
-
-                //     /* Remove item from unprocessed */
-                //     this.unprocessedItems.splice(0, 1);
-                //     if (this.unprocessedItems.length === 0) return false;
-                // }
-
                 let totalWithRatio = 0;
+
+                /* + 1 to get the margin on the right side of the last one */
                 let spaceOver = (this.wrapperWidthForUse - (this.config.itemMargin * (itemsCount + 1)));
 
+                /* get total with ratio */
                 for (let i = 0; i < itemsCount; i++) {
                     totalWithRatio += this.items[this.unprocessedItems[i].key].turtle.ratio.width;
                 }
 
                 for (let i = 0; i < itemsCount; i++) {
+                    // TODO: set percent instead
                     this.items[this.unprocessedItems[0].key].style.width = (spaceOver / totalWithRatio) * this.items[this.unprocessedItems[0].key].turtle.ratio.width + 'px';
                     this.items[this.unprocessedItems[0].key].style.height = (spaceOver / totalWithRatio) + 'px';
 
@@ -290,7 +193,6 @@ class Turtle {
             setImagesWidthHeight = setImagesWidthHeight.bind(this);
 
             /**
-             *
              *
              * @param {Array:HTMLImageElement} items
              * @returns {Boolean} if items fit in wrapper
@@ -323,29 +225,21 @@ class Turtle {
                     }
                 }
 
-                if (itemsToTry <= Math.min(this.minItems, 2)) {
-                    setImagesWidthHeight(itemsToTry);
-                    return false;
-                }
+                // TODO: Clean this up
+                // Check if last row, then it doesn't need to fill the whole space
+
 
                 /* if items fit in wrapper */
-                if (passed) {
-                    // TODO: save values
-                    setImagesWidthHeight(itemsToTry);
-
-
-                    /* return false to stop while loop */
-                    return false;
-                } else {
-                    if (itemsToTry = 1) {
-                        setImagesWidthHeight(itemsToTry);
-                        return false;
-                    }
+                if (!passed && itemsToTry > Math.min(this.minItems, 2)) {
                     /* Try width one less item */
                     itemsToTry -= 1;
-                    /* return true to do while loop */
+                    /* return true to continue while loop */
                     return true;
                 }
+
+                setImagesWidthHeight(itemsToTry);
+                /* return false to stop while loop */
+                return false;
             }
             calcNumberOfImagesForCurrentRow = calcNumberOfImagesForCurrentRow.bind(this);
 
@@ -369,6 +263,9 @@ class Turtle {
             this.items.forEach(function(element) {
                 this.wrapper.appendChild(element);
             }, this);
+            /* Removes whitespace from within container */
+            this.wrapper.innerHTML = this.wrapper.innerHTML.replace(/>\s+</g, '><');
+
             this.oldWrapperReference.innerHTML = this.wrapper.innerHTML;
             if (typeof this.userCallback === 'function') {
                 this.userCallback();

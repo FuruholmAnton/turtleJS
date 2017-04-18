@@ -7,8 +7,9 @@
     <title>turtleJS</title>
 
     <style type="text/css">
-      .turtlejs img{
-        height: 300px;
+      .turtlejs {
+        display: flex;
+        flex-wrap: wrap;
       }
     </style>
 
@@ -34,7 +35,9 @@
     <script type="text/javascript">
     	document.addEventListener("DOMContentLoaded", function(event) {
         window.turtle = new Turtle(document.querySelector('.turtlejs'), {
-          minWidth: 200,
+          minWidth: 250,
+          minHeight: 260,
+          itemMargin: 4,
         });
     	  turtle.init();
     	});

@@ -1,6 +1,6 @@
 
 class Turtle {
-    constructor(wrapper, config) {
+    constructor(wrapper) {
         if (!(wrapper instanceof HTMLElement)) {
             console.error('Param needs to be an instance of HTMLElement');
             return false;
@@ -21,30 +21,6 @@ class Turtle {
         this.totalLoadedItems = 0;
 
         this.wrapperWidth = wrapper.getBoundingClientRect().width;
-
-        /* Users settings overrides default */
-        this.config = Object.assign({
-            wrapperPadding: 0,
-            itemMargin: 4,
-            minWidth: 100,
-            maxWidth: 400,
-            minHeight: 50,
-            maxHeight: 400,
-            resize: false,
-        }, config);
-
-        /* MaxWidth cannot be less than minWidth */
-        if (this.config.minWidth > this.config.maxWidth) {
-            this.config.maxWidth = this.config.minWidth;
-        }
-
-        /* Get the space over for images:
-           Wrapper width - padding */
-        this.wrapperWidthForUse = (this.wrapperWidth - (this.config.wrapperPadding * 2));
-
-        /* Calc how many items can fit in wrapper */
-        this.maxItems = Math.floor(this.wrapperWidth / this.config.minWidth);
-        this.minItems = Math.floor(this.wrapperWidth / this.config.maxWidth);
     }
 
 
@@ -56,10 +32,36 @@ class Turtle {
      *
      * @memberOf Turtle
      */
-    init(callback) {
+		init(config, callback) {
         if (typeof callback === 'function') {
             this.userCallback = callback;
-        }
+				}
+
+				/* Users settings overrides default */
+				this.config = Object.assign({
+					wrapperPadding: 0,
+					itemMargin: 4,
+					minWidth: 100,
+					maxWidth: 400,
+					minHeight: 50,
+					maxHeight: 400,
+					resize: false,
+				}, config);
+
+				/* MaxWidth cannot be less than minWidth */
+				if (this.config.minWidth > this.config.maxWidth) {
+					this.config.maxWidth = this.config.minWidth;
+				}
+
+        /* Get the space over for images:
+           Wrapper width - padding */
+				this.wrapperWidthForUse = (this.wrapperWidth - (this.config.wrapperPadding * 2));
+
+				/* Calc how many items can fit in wrapper */
+				this.maxItems = Math.floor(this.wrapperWidth / this.config.minWidth);
+				this.minItems = Math.floor(this.wrapperWidth / this.config.maxWidth);
+
+
 
         /* Some styling */
         let style = document.createElement('style');

@@ -1,6 +1,5 @@
 
 class Turtle {
-
     constructor(wrapper, config) {
         if (!(wrapper instanceof HTMLElement)) {
             console.error('Param needs to be an instance of HTMLElement');

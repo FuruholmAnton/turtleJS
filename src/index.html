@@ -17,11 +17,9 @@
   </head>
   <body>
 
-
     <h1>turtleJS</h1>
 
     <div class="turtlejs">
-
     	  <img src="images/4.jpg" alt=""><img src="images/1.jpg" alt="">
     	  <img src="images/2.jpg" alt="">
     	  <img src="images/5.jpg" alt="">
@@ -41,7 +39,11 @@
           itemMargin: 4,
         });
     	  turtle.init();
-    	});
+			});
+
+			window.addEventListener('resize', () => {
+				turtle.init();
+			});
     </script>
   </body>
 </html>

@@ -23,11 +23,15 @@
 			}
 
       .turtlejs {
-        display: flex;
-				flex-wrap: wrap;
+        /* display: flex;
+				flex-wrap: wrap; */
 				max-width: 800px;
 				margin: 0 auto;
-      }
+			}
+
+			img {
+				width: 100%;
+			}
     </style>
 
   </head>
@@ -49,12 +53,22 @@
     <script src="turtle.js"></script>
     <script type="text/javascript">
     	document.addEventListener("DOMContentLoaded", function(event) {
-        window.turtle = new Turtle(document.querySelector('.turtlejs'), {
-          minWidth: 250,
-          minHeight: 260,
-          itemMargin: 4,
-        });
-    	  turtle.init();
+				window.turtle = new Turtle(document.querySelector('.turtlejs'));
+
+				if (window.innerWidth < 700) {
+					turtle.init({
+						minWidth: 150,
+						minHeight: 150,
+						itemMargin: 4,
+					});
+				} else {
+					turtle.init({
+						minWidth: 250,
+						minHeight: 250,
+						itemMargin: 4,
+					});
+				}
+
 			});
 
 			window.addEventListener('resize', () => {

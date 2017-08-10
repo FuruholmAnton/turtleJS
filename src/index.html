@@ -1,79 +1,114 @@
 <!doctype html>
 <html lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>turtleJS</title>
 
-		<style type="text/css">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>turtleJS</title>
 
-			body {
-				padding: 0 0 2rem 0;
-			}
+	<style type="text/css">
+		body {
+			padding: 0 0 2rem 0;
+		}
 
-			h1 {
-				font-family: Arial, Helvetica, sans-serif;
-				text-align: center;
-				padding: 1em 0 1em;
-				font-weight: 300;
-				font-size: 3rem;
-				color: #ccc;
-				letter-spacing: 0.06em;
-			}
+		h1 {
+			font-family: Arial, Helvetica, sans-serif;
+			text-align: center;
+			padding: 1em 0 1em;
+			font-weight: 300;
+			font-size: 3rem;
+			color: #ccc;
+			letter-spacing: 0.06em;
+		}
 
-      .turtlejs {
-        /* display: flex;
+		.turtlejs {
+			/* display: flex;
 				flex-wrap: wrap; */
-				max-width: 800px;
-				margin: 0 auto;
+			max-width: 800px;
+			margin: 0 auto;
+		}
+
+		img {
+			width: 100%;
+		}
+
+		.options {
+			text-align: center;
+			padding: 2rem;
+		}
+	</style>
+
+</head>
+
+<body>
+
+	<h1>TurtleJS</h1>
+
+	<div class="options">
+		<button class="" onclick="initWithPercent();">Use % margins</button>
+		<button class="" onclick="initWithPixels();">Use px margins</button>
+	</div>
+
+	<div class="turtlejs">
+		<img src="images/4.jpg" alt="">
+		<img src="images/2.jpg" alt="">
+		<img src="images/7.jpg" alt="">
+		<img src="images/5.jpg" alt="">
+		<img src="images/8.jpg" alt="">
+		<img src="images/3.jpg" alt="">
+		<img src="images/6.jpg" alt="">
+		<img src="images/1.jpg" alt="">
+	</div>
+
+
+	<script src="turtle.js"></script>
+	<script type="text/javascript">
+		document.addEventListener("DOMContentLoaded", function (event) {
+			window.turtle = new Turtle(document.querySelector('.turtlejs'));
+
+			if (window.innerWidth < 700) {
+				turtle.init({
+					minWidth: 150,
+					minHeight: 150,
+					itemMargin: 4,
+				});
+			} else {
+				turtle.init({
+					minWidth: 250,
+					minHeight: 250,
+					itemMargin: 4,
+					itemMarginUnit: '%',
+				});
 			}
 
-			img {
-				width: 100%;
-			}
-    </style>
+		});
 
-  </head>
-  <body>
-
-    <h1>TurtleJS</h1>
-
-    <div class="turtlejs">
-    	  <img src="images/4.jpg" alt=""><img src="images/1.jpg" alt="">
-    	  <img src="images/2.jpg" alt="">
-    	  <img src="images/5.jpg" alt="">
-    	  <img src="images/3.jpg" alt="">
-    	  <img src="images/6.jpg" alt="">
-    	  <img src="images/7.jpg" alt="">
-    	  <img src="images/8.jpg" alt="">
-    </div>
-
-
-    <script src="turtle.js"></script>
-    <script type="text/javascript">
-    	document.addEventListener("DOMContentLoaded", function(event) {
-				window.turtle = new Turtle(document.querySelector('.turtlejs'));
-
-				if (window.innerWidth < 700) {
-					turtle.init({
-						minWidth: 150,
-						minHeight: 150,
-						itemMargin: 4,
-					});
-				} else {
-					turtle.init({
-						minWidth: 250,
-						minHeight: 250,
-						itemMargin: 4,
-					});
-				}
-
+		function initWithPercent() {
+			turtle.init({
+				minWidth: 250,
+				minHeight: 250,
+				itemMargin: 4,
+				itemMarginUnit: '%',
 			});
-
-			window.addEventListener('resize', () => {
-				// turtle.init();
+		}
+		function initWithPixels() {
+			turtle.init({
+				minWidth: 250,
+				minHeight: 250,
+				itemMargin: 4,
+				itemMarginUnit: 'px',
 			});
-    </script>
-  </body>
+		}
+
+		// window.addEventListener('resize', () => {
+		// 	turtle.init({
+		// 		minWidth: 50,
+		// 		minHeight: 50,
+		// 		itemMargin: 4,
+		// 	});
+		// });
+	</script>
+</body>
+
 </html>

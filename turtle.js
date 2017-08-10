@@ -37,6 +37,7 @@ class Turtle {
 		this.config = Object.assign({
 			wrapperPadding: 0,
 			itemMargin: 4,
+			itemMarginUnit: 'px',
 			minWidth: 100,
 			maxWidth: 400,
 			minHeight: 50,
@@ -61,10 +62,12 @@ class Turtle {
 
 
 		/* Some styling */
-		let style = document.createElement('style');
+		if (this.styleTag) this.styleTag.remove();
+		const style = document.createElement('style');
 		style.type = 'text/css';
-		style.innerHTML = `.turtlejs { padding: ${this.config.wrapperPadding}px; } .turtlejs-item { margin-left: ${this.config.itemMargin}px; margin-bottom: ${this.config.itemMargin}px; display: inline-block; vertical-align: top; }`;
+		style.innerHTML = `.turtlejs { padding: ${this.config.wrapperPadding}px; } .turtlejs-item { margin: 0 ${(this.config.itemMargin / 2) + this.config.itemMarginUnit} ${(this.config.itemMargin) + this.config.itemMarginUnit}; display: inline-block; vertical-align: top; }`;
 		document.head.appendChild(style);
+		this.styleTag = style;
 
 		this.wrapper.classList.add('turtlejs');
 
@@ -72,7 +75,11 @@ class Turtle {
            Wait for images to load */
 		for (let i = 0; i < this.totalItems; i++) {
 			this.items[i].classList.add('turtlejs-item');
-			this.items[i].addEventListener('load', this.finishLoadingItems);
+			if (this.items[i].complete) {
+				this.finishLoadingItems();
+			} else {
+				this.items[i].addEventListener('load', this.finishLoadingItems);
+			}
 
 			/* Inits object to store values specific to item */
 			// REVIEW: use Symbol() to prevent possible overwrite?
@@ -173,7 +180,7 @@ class Turtle {
 				let totalWithRatio = 0;
 
 				/* + 1 to get the margin on the right side of the last one */
-				let spaceOver = (this.wrapperWidthForUse /* - (this.config.itemMargin * (itemsCount + 1))*/);
+				// let spaceOver = (this.wrapperWidthForUse /* - (this.config.itemMargin * (itemsCount + 1))*/);
 
 				/* get total with ratio */
 				for (let i = 0; i < itemsCount; i++) {
@@ -181,9 +188,13 @@ class Turtle {
 				}
 
 				for (let i = 0; i < itemsCount; i++) {
-					// TODO: set percent instead
-					this.items[this.unprocessedItems[0].key].style.width = `calc(${(((spaceOver / totalWithRatio) * this.items[this.unprocessedItems[0].key].turtle.ratio.width) / this.wrapperWidth) * 100}% - ${this.config.itemMargin}px)`;
-					// this.items[this.unprocessedItems[0].key].style.height = (spaceOver / totalWithRatio) + 'px';
+					const newRatio = this.items[this.unprocessedItems[0].key].turtle.ratio.width / totalWithRatio;
+
+					if (this.config.itemMarginUnit == 'px') {
+						this.items[this.unprocessedItems[0].key].style.width = `calc(${newRatio * 100}% - ${(this.config.itemMargin * itemsCount) * newRatio + this.config.itemMarginUnit})`;
+					} else if (this.config.itemMarginUnit == '%') {
+						this.items[this.unprocessedItems[0].key].style.width = `calc(${newRatio * 100}% - (100% * ${(this.config.itemMargin * itemsCount) * (newRatio / 100)}))`;
+					}
 
 					/* Remove item from unprocessed */
 					this.unprocessedItems.splice(0, 1);

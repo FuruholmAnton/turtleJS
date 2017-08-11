@@ -2,9 +2,6 @@
 
 A flickr like grid system
 
-## ! Work in progress
-Has some serious bugs at the moment
+[http://furuholmanton.github.io/turtleJS/](http://furuholmanton.github.io/turtleJS/)
 
 
-### push to github pages
-`git subtree push --prefix src origin gh-pages`

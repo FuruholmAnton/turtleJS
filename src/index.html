@@ -43,11 +43,12 @@
 
 <body>
 
-	<h1>TurtleJS</h1>
+	<h1><strong>Turtle</strong>JS</h1>
 
 	<div class="options">
-		<button class="" onclick="initWithPercent();">Use % margins</button>
-		<button class="" onclick="initWithPixels();">Use px margins</button>
+		<button class="button-percent" data-unit="%">Use % margins</button>
+		<button class="button-pixels" data-unit="px">Use px margins</button>
+		<input class="number" type="number" min="0" value="4" onchange="init();">
 	</div>
 
 	<div class="turtlejs">
@@ -59,45 +60,38 @@
 		<img src="images/3.jpg" alt="">
 		<img src="images/6.jpg" alt="">
 		<img src="images/1.jpg" alt="">
+		<img src="images/9.jpg" alt="">
 	</div>
 
 
 	<script src="turtle.js"></script>
 	<script type="text/javascript">
+		var unit = 'px';
+
+		document.querySelector('.button-percent').addEventListener('click', init, false);
+		document.querySelector('.button-pixels').addEventListener('click', init, false);
+
 		document.addEventListener("DOMContentLoaded", function (event) {
 			window.turtle = new Turtle(document.querySelector('.turtlejs'));
 
-			if (window.innerWidth < 700) {
-				turtle.init({
-					minWidth: 150,
-					minHeight: 150,
-					itemMargin: 4,
-				});
-			} else {
-				turtle.init({
-					minWidth: 250,
-					minHeight: 250,
-					itemMargin: 4,
-					itemMarginUnit: '%',
-				});
-			}
+			init();
 
 		});
 
-		function initWithPercent() {
+		function init(e) {
+			if (e) {
+				unit = e.currentTarget.dataset.unit
+			}
 			turtle.init({
-				minWidth: 250,
+				count: 2,
+				breakpoints: {
+					400: 3,
+					1100: 4,
+				},
+				minWidth: 150,
 				minHeight: 250,
-				itemMargin: 4,
-				itemMarginUnit: '%',
-			});
-		}
-		function initWithPixels() {
-			turtle.init({
-				minWidth: 250,
-				minHeight: 250,
-				itemMargin: 4,
-				itemMarginUnit: 'px',
+				itemMargin: document.querySelector('.number').value,
+				itemMarginUnit: unit,
 			});
 		}
 
